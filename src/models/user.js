@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    // required: true,
   },
   role: {
     type: String,
@@ -33,7 +33,7 @@ const customerSchema = new mongoose.Schema({
   },
   liveLocation: {
     latitude: { type: Number },
-    logitude: { type: Number }
+    longitude: { type: Number }
   },
   address: { type: String, },
 });
@@ -51,7 +51,7 @@ const deliveryPartnerSchema = new mongoose.Schema({
   },
   liveLocation: {
     latitude: { type: Number },
-    logitude: { type: Number }
+    longitude: { type: Number }
   },
   address: { type: String },
   branch: { type: mongoose.Schema.Types.ObjectId, ref: "Branch" },

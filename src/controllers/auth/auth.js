@@ -106,6 +106,7 @@ export const refreshToken = async (req, reply) => {
 
 export const fetchUser = async (req, reply) => {
   try {
+
     const {userId,role} = req.user;
     let user;
     if(role === "Customer") {

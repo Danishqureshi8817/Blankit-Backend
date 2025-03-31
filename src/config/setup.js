@@ -45,9 +45,19 @@ export const admin = new AdminJS({
     companyName: "Grocery Delivery App",
     withMadeWithLove: false,
   },
+  dashboard: {
+    // This is where you can set the custom title of the dashboard
+    title: "Grocery Admin", // Custom title for the dashboard
+  },
   defaultTheme: dark.id,
   availableThemes: [dark, light, noSidebar],
-  rootPath: '/admin'
+  rootPath: '/admin',
+  hooks: {
+    after: (data) => {
+      data.head.title = "Custom Dashboard Title"; // Set custom title
+      return data;
+    },
+  },
 });
 
 export const buildAdminRouter = async (app) => {

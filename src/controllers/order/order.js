@@ -9,7 +9,7 @@ export const createOrder = async (req, reply) => {
 
     const customerData = await Customer.findById(userId);
     const branchData = await Branch.findById(branch);
-
+ 
     if (!customerData) {
       return reply.status(404).send({ message: "Customer not found" });
     }
@@ -18,24 +18,28 @@ export const createOrder = async (req, reply) => {
       customer: userId,
       items: items.map((item) => ({
         id: item.id,
-        item: item.item,
+        item: item?.item,
         count: item.count
       })),
       branch,
       totalPrice,
       deliveryLocation: {
-        latitude: customerData.location.latitude,
-        longitude: customerData.location.longitude,
+        latitude: customerData?.liveLocation?.latitude,
+        longitude: customerData?.liveLocation?.longitude,
         address: customerData.address || "No address available"
       },
       pickupLocation: {
-        latitude: branchData.location.latitude,
-        longitude: branchData.location.longitude,
+        latitude: branchData?.location?.latitude,
+        longitude: branchData?.location?.longitude,
         address: branchData.address || "No address available"
       }
     });
 
-    const savedOrder = await newOrder.save();
+    let savedOrder = await newOrder.save();
+
+    savedOrder = await savedOrder?.populate([
+      {path:'items.item'},
+    ])
 
     return reply.status(201).send({
       message: "Order created successfully",
@@ -121,7 +125,7 @@ export const updateOrderStatus = async (req, reply) => {
 
     await order.save();
 
-    req.server.io.to(orderId).emit("LiveTrackingUpdates",order);
+    req.server.io.to(orderId).emit("liveTrackingUpdates",order);
 
     return reply.send({
       message: "Order status updated successfully",

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Counter from "./counter.js"; 
 
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, unique: true },
@@ -43,7 +44,7 @@ async function getNextSequenceValue(sequenceName) {
 }
 
 orderSchema.pre("save", async function (next) {
-  if (!this.isNew) {
+  if (this.isNew) {
     const sequenceValue = await getNextSequenceValue("orderId");
     this.orderId = `ORDR${sequenceValue.toString().padStart(5, "0")}`;
   }

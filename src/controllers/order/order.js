@@ -98,61 +98,6 @@ export const confirmOrder = async (req, reply) => {
   }
 }
 
-// export const confirmOrder = async (req, reply) => {
-//   try {
-//     const { orderId } = req.params;
-//     const { userId } = req.user;
-//     const { deliveryPersonLocation } = req.body;
-
-//     console.log("Received Data:", { orderId, userId, deliveryPersonLocation });
-
-//     // Validate deliveryPersonLocation
-//     if (!deliveryPersonLocation || !deliveryPersonLocation.latitude || !deliveryPersonLocation.longitude) {
-//       return reply.status(400).send({ message: "Invalid deliveryPersonLocation data" });
-//     }
-
-//     const deliveryPerson = await DeliveryPartner.findById(userId);
-//     if (!deliveryPerson) {
-//       return reply.status(404).send({ message: "Delivery person not found" });
-//     }
-
-//     const order = await Order.findById(orderId);
-//     if (!order) {
-//       return reply.status(404).send({ message: "Order not found" });
-//     }
-
-//     if (order.status !== "available") {
-//       return reply.status(400).send({ message: "Order is not available" });
-//     }
-
-//     order.status = "confirmed";
-//     order.deliveryPartner = userId;
-//     order.deliveryPersonLocation = {
-//       latitude: parseFloat(deliveryPersonLocation.latitude),  // Convert to number
-//       longitude: parseFloat(deliveryPersonLocation.longitude),  // Convert to number
-//       address: deliveryPersonLocation.address || "No address available"
-//     };
-
-//     await order.save();
-
-//     // Emit WebSocket event (optional)
-//     if (req.server && req.server.io) {
-//       req.server.io.to(orderId).emit("orderConfirmed", order);
-//     } else {
-//       console.log("WebSocket not initialized");
-//     }
-
-//     return reply.send({
-//       message: "Order confirmed successfully",
-//       order,
-//     });
-
-//   } catch (error) {
-//     console.error("Error confirming order:", error);
-//     return reply.status(500).send({ message: "Failed to confirm order", error: error.message });
-//   }
-// };
-
 
 export const updateOrderStatus = async (req, reply) => {
   try {
@@ -161,6 +106,9 @@ export const updateOrderStatus = async (req, reply) => {
     const { userId } = req.user;
 
     const deliveryPerson = await DeliveryPartner.findById(userId);
+
+    console.log("Received Data:", { orderId, userId, status, deliveryPersonLocation });
+    
 
     if (!deliveryPerson) {
       return reply.status(404).send({ message: "Delivery person not found" });
@@ -171,7 +119,7 @@ export const updateOrderStatus = async (req, reply) => {
       return reply.status(404).send({ message: "Order not found" });
     }
 
-    if (["cancelled", "delivered"].includes(status)) {
+    if (["cancelled"].includes(status)) {
       return reply.status(400).send({ message: "Order cannot be updated" });
     }
 
@@ -195,6 +143,8 @@ export const updateOrderStatus = async (req, reply) => {
       order,
     })
   } catch (error) {
+    console.log("Error updating order status:", error);
+    
     return reply.status(500).send({ message: "Failed to update order status", error });
   }
 }

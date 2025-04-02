@@ -41,7 +41,6 @@ export const createOrder = async (req, reply) => {
       { path: 'items.item' },
       { path: 'customer' },
       { path: 'branch', populate: { path: 'deliveryPartner' } },
-
     ])
 
     return reply.status(201).send({
@@ -107,9 +106,6 @@ export const updateOrderStatus = async (req, reply) => {
 
     const deliveryPerson = await DeliveryPartner.findById(userId);
 
-    console.log("Received Data:", { orderId, userId, status, deliveryPersonLocation });
-    
-
     if (!deliveryPerson) {
       return reply.status(404).send({ message: "Delivery person not found" });
     }
@@ -143,7 +139,6 @@ export const updateOrderStatus = async (req, reply) => {
       order,
     })
   } catch (error) {
-    console.log("Error updating order status:", error);
     
     return reply.status(500).send({ message: "Failed to update order status", error });
   }
